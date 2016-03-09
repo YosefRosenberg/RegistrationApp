@@ -3,8 +3,8 @@ class WelcomeController < ApplicationController
   def index
   end
 
-________________________________________________________________________________
-________________________________________________________________________________
+#_______________________________________________________________________________
+#_______________________________________________________________________________
 
   def register
     if params.has_key?(:user_name) && !params[:user_name].strip.empty?
@@ -22,8 +22,8 @@ ________________________________________________________________________________
       phone1 = params[:phone1].strip
       phone2 = params[:phone2].strip
       phone3 = params[:phone3].strip
-________________________________________________________________________________
-________________________________________________________________________________
+#_______________________________________________________________________________
+#_______________________________________________________________________________
 
       # This creates a new user
       @user = User.new
@@ -37,24 +37,44 @@ ________________________________________________________________________________
       @user.zip_code = zip_code
       @user.country = country
       @user.email = email
-
-________________________________________________________________________________
-________________________________________________________________________________
-
-      # This creates a new phone
-      phone = Phone.new
-      # With the phone object we want to set it's values below
-      phone.number = phone1
-      phone.number2 = phone2
-      phone.number3 = phone3
-      # This appends phone to the new user's phones
-      @user.phones << phone
-
-      #This saves the new phone information
-      phone.save
-
       #This saves the user with all the new information
       @user.save
+
+#_______________________________________________________________________________
+#_______________________________________________________________________________
+
+      # This appends phone1 to the new user's phones
+      if !phone1.empty?
+        # This creates a new phone
+        phone = Phone.new
+        # With the phone object we want to set it's values below
+        phone.number = phone1
+        #This saves the new phone information
+        phone.save
+        @user.phones << phone
+      end
+
+      # This appends phone1 to the new user's phones
+      if !phone2.empty?
+        # This creates a new phone
+        phone = Phone.new
+        # With the phone object we want to set it's values below
+        phone.number = phone2
+        #This saves the new phone information
+        phone.save
+        @user.phones << phone
+      end
+
+      # This appends phone1 to the new user's phones
+      if !phone3.empty?
+        # This creates a new phone
+        phone = Phone.new
+        # With the phone object we want to set it's values below
+        phone.number = phone3
+        #This saves the new phone information
+        phone.save
+        @user.phones << phone
+      end
 
       # This puts the new user and its values into an encrypted cookie
       session[:user_id] = @user.id.to_s
@@ -64,31 +84,37 @@ ________________________________________________________________________________
     end
   end
 
-________________________________________________________________________________
-________________________________________________________________________________
+#_______________________________________________________________________________
+#_______________________________________________________________________________
 
   def login
     # We want to compare our user name and password with our database and if it works we will redirect to the information page
     users = User.where("user_name = ? AND password = ?", params[:user_name], params[:password])
     # If the users imput is empty then redirect to the current login page
     if users.empty?
+      flash.now[:alert] = 'Not Valid'
       render '/welcome/login'
     # elsif if the user/password parameters equal the parameters from the current session then redirect to the information page
-    elsif users.first.user_name == params[:user_name] && users.first.password == params[:password]
-      session[:user_name] = params[:user_name]
-      session[:password] = params[:password]
-      session[:id] = users.first.id
-      redirect_to '/welcome/info'
-    # Otherwise render the current page and display the information is 'Not Valid'
     else
-      render '/welcome/login'
-      flash.now[:alert] = 'Not Valid'
+      session[:user_id] = users.first.id
+      redirect_to '/welcome/info'
     end
   end
 
-________________________________________________________________________________
-________________________________________________________________________________
+#_______________________________________________________________________________
+#_______________________________________________________________________________
 
-  def info
+def info
+  @user = User.find(session[:user_id])
+  render 'info.html.erb'
+end
+
+#_______________________________________________________________________________
+#_______________________________________________________________________________
+
+def logout
+  session[:user_id] = nil
+  flash[:notice] = 'You have successfully logged out.'
+  redirect_to '/welcome/login'
   end
 end

@@ -13,3 +13,6 @@
  *= require_tree .
  *= require_self
  */
+ body {
+   background-image: url("http://www.pptgrounds.com/wp-content/uploads/2013/02/An-old-map-Powerpoint-Background-1024x768.jpg");
+ }
