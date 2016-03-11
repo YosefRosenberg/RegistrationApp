@@ -88,16 +88,22 @@ class WelcomeController < ApplicationController
 #_______________________________________________________________________________
 
   def login
-    # We want to compare our user name and password with our database and if it works we will redirect to the information page
-    users = User.where("user_name = ? AND password = ?", params[:user_name], params[:password])
-    # If the users imput is empty then redirect to the current login page
-    if users.empty?
-      flash.now[:alert] = 'Not Valid'
+    # If the params does not have a user name assign the flash to nil and render the welcome/login page
+    if !params.has_key?(:user_name)
+      flash[:notice] = nil
       render '/welcome/login'
-    # elsif if the user/password parameters equal the parameters from the current session then redirect to the information page
     else
-      session[:user_id] = users.first.id
-      redirect_to '/welcome/info'
+      # We want to compare our user name and password with our database and if it works we will redirect to the information page
+      users = User.where("user_name = ? AND password = ?", params[:user_name], params[:password])
+      # If the users imput is empty then redirect to the current login page
+      if users.empty?
+        flash[:notice] = 'User Name or Password Not Valid'
+        render '/welcome/login'
+      # elsif if the user/password parameters equal the parameters from the current session then redirect to the information page
+      else
+        session[:user_id] = users.first.id
+        redirect_to '/welcome/info'
+      end
     end
   end
 
@@ -117,4 +123,7 @@ def logout
   flash[:notice] = 'You have successfully logged out.'
   redirect_to '/welcome/login'
   end
+
+
+# This is the final end
 end

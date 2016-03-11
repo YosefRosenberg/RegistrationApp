@@ -5,12 +5,13 @@
 </br>
 <!-- _______________________________________________________________________________ -->
 <form id="loginform" action ="/welcome/login" method ="get">
-  <input type="text" name=user_name placeholder='Username' autofocus/>
-  <input type="text" name="password" placeholder = 'Password'/>
-  <input type="submit" value= "Login"/>
+  <input type="text" name=user_name placeholder='Username'  autofocus/>
+  <input type="text" name="password" placeholder = 'Password'  />
+  <span class="submit"><input type="submit" value="Submit"/></span>
 </form>
+
 <!-- ________________________________________________________________________________ -->
 </br>
 <% if flash[:notice] %>
     <div class="notice"><%= flash[:notice] %></div>
-  <% end %>
+<% end %>
